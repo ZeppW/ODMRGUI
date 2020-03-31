@@ -1,8 +1,12 @@
 import sys
-
-from PyQt5.QtWidgets import QToolButton, QLabel,  QLineEdit, QComboBox, QMainWindow, QApplication, QPushButton, QWidget, QAction, QTabWidget, QVBoxLayout, QGroupBox, QHBoxLayout, QGridLayout
+import numpy as np
+from PyQt5.QtWidgets import QToolButton, QFileDialog, QLabel,  QLineEdit, QComboBox, QMainWindow, QApplication, QPushButton, QWidget, QAction, QTabWidget, QVBoxLayout, QGroupBox, QHBoxLayout, QGridLayout
 from PyQt5.QtGui import QIcon, QFont
+import csv
+import datetime
 from PyQt5.QtCore import pyqtSlot
+now = datetime.datetime.now()
+
 
 class MainGui(QMainWindow):
     """This is the main window."""
@@ -125,11 +129,49 @@ class PulseInputButtons(QWidget):
         SaveLoadbox.setLayout(SaveLoadlayout)
 
         Savebutton = QPushButton('Save')
+        Savebutton.clicked.connect(self.on_click_savetext)
         Loadbutton = QPushButton('Load')
+        Loadbutton.clicked.connect(self.on_click_loadtext)
 
         SaveLoadlayout.addWidget(Savebutton)
         SaveLoadlayout.addWidget(Loadbutton)
         return SaveLoadbox
+
+    def saveFileDialog(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getSaveFileName(self, "QFileDialog.getSaveFileName()", "",
+                                                  "All Files (*);;Text Files (*.txt)", options=options)
+        return fileName
+
+    def loadtext(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "",
+                                                  "All Files (*);;Python Files (*.py)", options=options)
+        fileName = str(fileName)
+        print(fileName)
+        if not fileName: return
+        self.text1, self.text =np.loadtxt(fileName, usecols=(0,1), skiprows=2, unpack=True)
+        return self.text1, self.text
+
+
+    @pyqtSlot()
+
+    def on_click_loadtext(self):
+        self.text1, self.text = self.loadtext()
+
+        print('Loaded')
+
+    def on_click_savetext(self):
+        datafilename =self.saveFileDialog()
+        file =open(datafilename, 'w', newline='')
+        tsv_writer = csv.writer(file, delimiter='\t') #defining the filetype as tab-separated
+        tsv_writer.writerow([now.strftime("%Y-%m-%d %H:%M")]) #includes date and time
+        tsv_writer.writerow([]) #blank row
+        tsv_writer.writerow(['Pulse Sequence:', datafilename])
+
+        print('Saved')
 
     def setmode(self, text):
         if text == 'a':
