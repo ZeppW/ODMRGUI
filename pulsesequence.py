@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-from PyQt5.QtWidgets import QToolButton, QFileDialog, QLabel,  QLineEdit, QComboBox, QTableWidget, QMainWindow, QApplication, QPushButton, QWidget, QAction, QTabWidget, QVBoxLayout, QGroupBox, QHBoxLayout, QGridLayout
+from PyQt5.QtWidgets import QToolButton, QFileDialog, QLabel,  QLineEdit, QComboBox, QSizePolicy, QTableWidget, QMainWindow, QApplication, QPushButton, QWidget, QAction, QTabWidget, QVBoxLayout, QGroupBox, QHBoxLayout, QGridLayout
 from PyQt5.QtGui import QIcon, QFont
 import csv
 import datetime
@@ -19,7 +19,7 @@ class MainGui(QMainWindow):
         self.title = 'ODMR Control'
         self.left = 200
         self.top = 50
-        self.width = 300
+        self.width = 1000
         self.height = 300
         self.initUI()
         sys.exit(app.exec_())
@@ -49,9 +49,16 @@ class PulseInputButtons(QWidget):
         grid.addWidget(MW,0,0)
         grid.addWidget(Laser, 1,0)
         grid.addWidget(DAQ, 2,0)
-        grid.addWidget(Save, 8, 1, 4, 1)
-        grid.addWidget(Sequence, 0,1, 8,8)
-        self.setLayout(grid)
+        grid.addWidget(Save, 3, 0)
+        # grid.addWidget(Sequence, 0,1, 8,8)
+        buttonbox = QGroupBox()
+        buttonbox.setLayout(grid)
+        buttonbox.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        Sequence.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        layout = QHBoxLayout()
+        layout.addWidget(buttonbox)
+        layout.addWidget(Sequence)
+        self.setLayout(layout)
 
     def MWbuttons(self):
         MWgroupbox = QGroupBox()
