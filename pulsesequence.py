@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-from PyQt5.QtWidgets import QToolButton, QFileDialog, QLabel,  QLineEdit, QComboBox, QMainWindow, QApplication, QPushButton, QWidget, QAction, QTabWidget, QVBoxLayout, QGroupBox, QHBoxLayout, QGridLayout
+from PyQt5.QtWidgets import QToolButton, QFileDialog, QLabel,  QLineEdit, QComboBox, QTableWidget, QMainWindow, QApplication, QPushButton, QWidget, QAction, QTabWidget, QVBoxLayout, QGroupBox, QHBoxLayout, QGridLayout
 from PyQt5.QtGui import QIcon, QFont
 import csv
 import datetime
@@ -44,11 +44,13 @@ class PulseInputButtons(QWidget):
         Laser = self.Laserbuttons()
         DAQ = self.DAQbuttons()
         Save = self.SaveLoadButtons()
+        Sequence = self.sequence()
 
         grid.addWidget(MW,0,0)
         grid.addWidget(Laser, 1,0)
         grid.addWidget(DAQ, 2,0)
-        grid.addWidget(Save, 2, 1, 4, 1)
+        grid.addWidget(Save, 8, 1, 4, 1)
+        grid.addWidget(Sequence, 0,1, 8,8)
         self.setLayout(grid)
 
     def MWbuttons(self):
@@ -123,6 +125,32 @@ class PulseInputButtons(QWidget):
 
         return DAQbox
 
+    def sequence(self):
+        self.columns = 3
+        self.rows = 5
+
+        sequencelayout = QGridLayout()
+        sequencebox = QGroupBox()
+        sequencebox.setLayout(sequencelayout)
+        table_widget = QTableWidget(self.rows,self.columns)
+        sequencelayout.addWidget(table_widget,0,0)
+
+        i=0
+        j=0
+        while i < self.rows:
+
+            while j < self.columns:
+                self.sequence_options_i_j = QComboBox()
+                self.sequence_options_i_j.addItem('Option a')
+                self.sequence_options_i_j.addItem('Option b')
+                table_widget.setCellWidget(i,j,self.sequence_options_i_j)
+                j=j+1
+                print(j, 'added column')
+            j=0
+            i =i+1
+            print(i, 'added row')
+        return sequencebox
+
     def SaveLoadButtons(self):
         SaveLoadbox = QGroupBox()
         SaveLoadlayout = QHBoxLayout()
@@ -184,4 +212,6 @@ MainGui()
 
 #TODO: add functionality to all buttons
 #TODO: make sure we have the layout correct (ask Zeppelin what buttons are missing or are formatted wrong, etc.)
-#TODO: figure out the layout for the central pulse sequence design (table of drop downs? how many columns/rows, etc.)
+#TODO: set up read/write functionality for all boxes
+#TODO: set up save/load for all boxes
+#TODO: figure out how to make pulse sequence widget responsive to add/remove column/row
