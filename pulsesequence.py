@@ -66,37 +66,37 @@ class PulseInputButtons(QWidget):
         MWgroupbox.setTitle('MW')
         MWgroupbox.setLayout(MWlayout)
 
-        MWPWlabel = QLabel('PW')
-        MWPWbutton = QLineEdit()
+        self.MWPWlabel = QLabel('PW')
+        self.MWPWbutton = QLineEdit()
 
-        Triggerlabel = QLabel('Trigger Mode')
-        Triggermode = QComboBox()
-        Triggermode.addItem('Setting a')
-        Triggermode.addItem('Setting b')
-        Triggermode.addItem('Setting c')
-        Triggermode.activated[str].connect(lambda x: self.setmode(x))
+        self.Triggerlabel = QLabel('Trigger Mode')
+        self.Triggermode = QComboBox()
+        self.Triggermode.addItem('Setting a')
+        self.Triggermode.addItem('Setting b')
+        self.Triggermode.addItem('Setting c')
+        self.Triggermode.activated[str].connect(lambda x: self.setmode(x))
 
-        Samplinglabel = QLabel('Sampling Mode')
-        Samplingmode = QComboBox()
-        Samplingmode.addItem('Setting a')
-        Samplingmode.addItem('Setting b')
-        Samplingmode.addItem('Setting c')
-        Samplingmode.activated[str].connect(lambda x: self.setmode(x))
+        self.Samplinglabel = QLabel('Sampling Mode')
+        self.Samplingmode = QComboBox()
+        self.Samplingmode.addItem('Setting a')
+        self.Samplingmode.addItem('Setting b')
+        self.Samplingmode.addItem('Setting c')
+        self.Samplingmode.activated[str].connect(lambda x: self.setmode(x))
 
-        Routelabel = QLabel('Sampling Route')
-        Samplingroute = QLineEdit()
+        # self.Routelabel = QLabel('Sampling Route')
+        # self.Samplingroute = QLineEdit()
 
-        MWlayout.addWidget(MWPWlabel,0,0)
-        MWlayout.addWidget(MWPWbutton,0,1)
+        MWlayout.addWidget(self.MWPWlabel,0,0)
+        MWlayout.addWidget(self.MWPWbutton,0,1)
 
-        MWlayout.addWidget(Triggerlabel,1,0)
-        MWlayout.addWidget(Triggermode,1,1)
+        MWlayout.addWidget(self.Triggerlabel,1,0)
+        MWlayout.addWidget(self.Triggermode,1,1)
 
-        MWlayout.addWidget(Samplinglabel,2,0)
-        MWlayout.addWidget(Samplingmode,2,1)
+        MWlayout.addWidget(self.Samplinglabel,2,0)
+        MWlayout.addWidget(self.Samplingmode,2,1)
 
-        MWlayout.addWidget(Routelabel,3,0)
-        MWlayout.addWidget(Samplingroute,3,1)
+        # MWlayout.addWidget(Routelabel,3,0)
+        # MWlayout.addWidget(Samplingroute,3,1)
 
         return MWgroupbox
 
@@ -107,10 +107,10 @@ class PulseInputButtons(QWidget):
         Laserbox.setLayout(Laserlayout)
 
         Laserlabel = QLabel('Laser')
-        Laserbutton = QLineEdit()
+        self.Laserbutton = QLineEdit()
 
         Laserlayout.addWidget(Laserlabel, 0,0)
-        Laserlayout.addWidget(Laserbutton,0,1)
+        Laserlayout.addWidget(self.Laserbutton,0,1)
         return Laserbox
 
     def DAQbuttons(self):
@@ -120,15 +120,15 @@ class PulseInputButtons(QWidget):
         DAQbox.setLayout(DAQlayout)
 
         Samplelabel = QLabel('N Sample')
-        Samplebutton = QLineEdit()
+        self.Samplebutton = QLineEdit()
 
         Timeoutlabel = QLabel('Timeout')
-        Timeoutbutton = QLineEdit()
+        self.Timeoutbutton = QLineEdit()
 
         DAQlayout.addWidget(Samplelabel,0,0)
-        DAQlayout.addWidget(Samplebutton,0,1)
+        DAQlayout.addWidget(self.Samplebutton,0,1)
         DAQlayout.addWidget(Timeoutlabel,1,0)
-        DAQlayout.addWidget(Timeoutbutton,1,1)
+        DAQlayout.addWidget(self.Timeoutbutton,1,1)
 
         return DAQbox
 
