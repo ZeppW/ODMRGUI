@@ -67,18 +67,18 @@ class PulseInputButtons(QWidget):
         MWgroupbox.setLayout(MWlayout)
 
         self.MWPWlabel = QLabel('PW')
-        self.MWPWbutton = QLineEdit()
+        self.MWPWbutton = QLineEdit('1.2')
 
         self.Triggerlabel = QLabel('Trigger Mode')
         self.Triggermode = QComboBox()
-        self.Triggermode.addItem('Setting a')
+        self.Triggermode.addItem('trig')
         self.Triggermode.addItem('Setting b')
         self.Triggermode.addItem('Setting c')
         self.Triggermode.activated[str].connect(lambda x: self.setmode(x))
 
         self.Samplinglabel = QLabel('Sampling Mode')
         self.Samplingmode = QComboBox()
-        self.Samplingmode.addItem('Setting a')
+        self.Samplingmode.addItem('RF')
         self.Samplingmode.addItem('Setting b')
         self.Samplingmode.addItem('Setting c')
         self.Samplingmode.activated[str].connect(lambda x: self.setmode(x))
@@ -106,8 +106,8 @@ class PulseInputButtons(QWidget):
         Laserbox.setTitle('Laser')
         Laserbox.setLayout(Laserlayout)
 
-        Laserlabel = QLabel('Laser')
-        self.Laserbutton = QLineEdit()
+        Laserlabel = QLabel('Laser Power (mW)')
+        self.Laserbutton = QLineEdit('300')
 
         Laserlayout.addWidget(Laserlabel, 0,0)
         Laserlayout.addWidget(self.Laserbutton,0,1)
@@ -120,10 +120,10 @@ class PulseInputButtons(QWidget):
         DAQbox.setLayout(DAQlayout)
 
         Samplelabel = QLabel('N Sample')
-        self.Samplebutton = QLineEdit()
+        self.Samplebutton = QLineEdit('20000')
 
-        Timeoutlabel = QLabel('Timeout')
-        self.Timeoutbutton = QLineEdit()
+        Timeoutlabel = QLabel('Timeout (s)')
+        self.Timeoutbutton = QLineEdit('60')
 
         DAQlayout.addWidget(Samplelabel,0,0)
         DAQlayout.addWidget(self.Samplebutton,0,1)
@@ -152,10 +152,10 @@ class PulseInputButtons(QWidget):
                 self.sequence_options_i_j.addItem('Option b')
                 table_widget.setCellWidget(i,j,self.sequence_options_i_j)
                 j=j+1
-                print(j, 'added column')
+                # print(j, 'added column')
             j=0
             i =i+1
-            print(i, 'added row')
+            # print(i, 'added row')
         return sequencebox
 
     def SaveLoadButtons(self):
@@ -192,21 +192,42 @@ class PulseInputButtons(QWidget):
 
 
     @pyqtSlot()
+    def on_click_savetext(self):
+        #here we get instrument info for the file saving header
+
+        #this is where we start to format the save files
+        datafilename = self.saveFileDialog() #using the file name selected in the file dialog
+        file = open(datafilename, 'w', newline='') #begin the writing
+        tsv_writer = csv.writer(file, delimiter='\t') #defining the filetype as tab-separated
+        tsv_writer.writerow([now.strftime("%Y-%m-%d %H:%M")]) #includes date and time
+        tsv_writer.writerow([]) #blank row
+        # #writes camera type and grating info
+        # # if caps.ulCameraType == 14:
+        # #     tsv_writer.writerow(['Camera Type:', 'InGaAs'])
+        # # else:
+        # #     tsv_writer.writerow(['Camera Type:', 'unknown'])
+        # # tsv_writer.writerow(['Camera Serial Number:', iSerialNumber])
+        tsv_writer.writerow([])
+        tsv_writer.writerow(['MWPW:', float(self.MWPWbutton.text())])
+        tsv_writer.writerow(['Trigger mode:', self.Triggermode.currentText()])
+        tsv_writer.writerow(['Sampling Mode:', self.Samplingmode.currentText()])
+        # tsv_writer.writerow([])
+        tsv_writer.writerow(['Laser:', float(self.Laserbutton.text())])
+        tsv_writer.writerow([])
+        tsv_writer.writerow(['DAQ N sample:', float(self.Samplebutton.text())])
+        tsv_writer.writerow(['DAQ Timeout:', float(self.Timeoutbutton.text())])
+        tsv_writer.writerow([])
+        # TODO: Figure out how to read out table values
+        tsv_writer.writerow(['Pulse Sequence', ]) #writes the data
+        # datalist = list(self.data)
+        # for i in range(len(datalist)):
+        #     tsv_writer.writerow([i, self.wavelength[i], datalist[i]])
+        file.close()
 
     def on_click_loadtext(self):
         self.text1, self.text = self.loadtext()
 
         print('Loaded')
-
-    def on_click_savetext(self):
-        datafilename =self.saveFileDialog()
-        file =open(datafilename, 'w', newline='')
-        tsv_writer = csv.writer(file, delimiter='\t') #defining the filetype as tab-separated
-        tsv_writer.writerow([now.strftime("%Y-%m-%d %H:%M")]) #includes date and time
-        tsv_writer.writerow([]) #blank row
-        tsv_writer.writerow(['Pulse Sequence:', datafilename])
-
-        print('Saved')
 
     def setmode(self, text):
         if text == 'a':
