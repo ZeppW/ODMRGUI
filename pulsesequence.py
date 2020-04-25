@@ -5,14 +5,13 @@ from PyQt5.QtGui import QIcon, QFont
 import csv
 import datetime
 from PyQt5.QtCore import pyqtSlot
+from functionpool import savedPara
 now = datetime.datetime.now()
 
 
 class MainGui(QMainWindow):
     """This is the main window."""
     def __init__(self):
-        app = QApplication(sys.argv)
-        app.setStyle('Fusion')
         super(MainGui, self).__init__()
         self.font = QFont('Sans Serif', 12)
         app.setFont(self.font)
@@ -22,7 +21,6 @@ class MainGui(QMainWindow):
         self.width = 1000
         self.height = 300
         self.initUI()
-        sys.exit(app.exec_())
 
     def initUI(self):
         self.setWindowTitle(self.title)
@@ -66,21 +64,22 @@ class PulseInputButtons(QWidget):
         MWgroupbox.setTitle('MW')
         MWgroupbox.setLayout(MWlayout)
 
-        self.MWPWlabel = QLabel('PW')
-        self.MWPWbutton = QLineEdit('1.2')
+        self.MWPWlabel = QLabel('PW (dbm)')
+        self.MWPWbutton = QLineEdit('4.0')
 
         self.Triggerlabel = QLabel('Trigger Mode')
         self.Triggermode = QComboBox()
         self.Triggermode.addItem('trig')
-        self.Triggermode.addItem('Setting b')
-        self.Triggermode.addItem('Setting c')
+        self.Triggermode.addItem('cont')
+        self.Triggermode.addItem('gate')
         self.Triggermode.activated[str].connect(lambda x: self.setmode(x))
 
         self.Samplinglabel = QLabel('Sampling Mode')
         self.Samplingmode = QComboBox()
         self.Samplingmode.addItem('RF')
-        self.Samplingmode.addItem('Setting b')
-        self.Samplingmode.addItem('Setting c')
+        self.Samplingmode.addItem('NRZ')
+        self.Samplingmode.addItem('NRTZ')
+        self.Samplingmode.addItem('RTZ')
         self.Samplingmode.activated[str].connect(lambda x: self.setmode(x))
 
         # self.Routelabel = QLabel('Sampling Route')
@@ -164,7 +163,9 @@ class PulseInputButtons(QWidget):
         SaveLoadbox.setLayout(SaveLoadlayout)
 
         Savebutton = QPushButton('Save')
+        ## by clicking save button, it will also load all the parameters to the device, waiting for execute
         Savebutton.clicked.connect(self.on_click_savetext)
+        Savebutton.clicked.connect(self.on_click_loadparameters)
         Loadbutton = QPushButton('Load')
         Loadbutton.clicked.connect(self.on_click_loadtext)
 
@@ -229,6 +230,20 @@ class PulseInputButtons(QWidget):
 
         print('Loaded')
 
+    def on_click_loadparameters(self):
+        MW_pw = float(QLineEdit.text(self.MWPWbutton)) ## in dbm
+        MW_trig = str(self.Triggermode.currentText())
+        MW_samplingmode = str(self.Samplingmode.currentText())
+        Laser_pw = float(QLineEdit.text(self.Laserbutton)) ## in mW
+        DAQ_Nsample = int(QLineEdit.text(self.Samplebutton))
+        DAQ_timeout = float(QLineEdit.text(self.Timeoutbutton)) ## in sec
+        loaded = savedPara(MW_pw, MW_trig, MW_samplingmode, Laser_pw, \
+                                        DAQ_Nsample, DAQ_timeout)
+        print(type(loaded))
+        loaded.export()
+        loaded.loadParameters()
+        
+
     def setmode(self, text):
         if text == 'a':
             self.colormap = self.heat
@@ -236,10 +251,19 @@ class PulseInputButtons(QWidget):
             self.colormap = self.gray
         if text == 'c':
             self.colormap = self.rainbow
-MainGui()
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    app.setStyle('Fusion')
+    ex = MainGui()
+    sys.exit(app.exec_())
+
 
 #TODO: add functionality to all buttons
 #TODO: make sure we have the layout correct (ask Zeppelin what buttons are missing or are formatted wrong, etc.)
 #TODO: set up read/write functionality for all boxes
 #TODO: set up save/load for all boxes
 #TODO: figure out how to make pulse sequence widget responsive to add/remove column/row
+
+#Button on click function added
+#TODO: test in real system
