@@ -188,7 +188,7 @@ class PulseInputButtons(QWidget):
         fileName = str(fileName)
         print(fileName)
         if not fileName: return
-        self.text1, self.text =np.loadtxt(fileName, usecols=(0,1), skiprows=2, unpack=True)
+        self.text1, self.text = np.loadtxt(fileName, usecols=(0,1), skiprows=2, unpack=True)
         return self.text1, self.text
 
 
@@ -239,9 +239,8 @@ class PulseInputButtons(QWidget):
         DAQ_timeout = float(QLineEdit.text(self.Timeoutbutton)) ## in sec
         loaded = savedPara(MW_pw, MW_trig, MW_samplingmode, Laser_pw, \
                                         DAQ_Nsample, DAQ_timeout)
-        print(type(loaded))
-        loaded.export()
         loaded.loadParameters()
+        loaded.export()
         
 
     def setmode(self, text):

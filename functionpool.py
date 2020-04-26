@@ -16,12 +16,16 @@ class savedPara:
 
     def export(self):
         print("Current setting:")
-        print("MW power: {} pbm".format(self.MW_pw))
-        print("AWG trigger mode: {}".format(self.MW_trig))
-        print("AWG sampling mode: {}".format(self.MW_smode))
-        print("Laser power: {} mW".format(self.Laser_pw))
-        print("DAQ N sample: {}".format(self.DAQ_Nsample))
-        print("DAQ timeout: {} s".format(self.DAQ_timeout))
+        awg_ampl = AWG.amplitudeQ()
+        print("MW power: {} Vpp".format(awg_ampl))
+        awg_trig = AWG.trigQ()
+        print("AWG trigger mode: {}".format(awg_trig))
+        awg_sampling = AWG.samplingQ()
+        print("AWG sampling mode: {}".format(awg_sampling))
+        laser_pw = GEM.PowerQ()
+        print("Laser power: {}".format(laser_pw))
+        DAQ_Nsample = DAQ.sampleQ()
+        print("DAQ N sample: {}".format(DAQ_Nsample))
 
 
     def loadParameters(self):
@@ -41,7 +45,7 @@ class savedPara:
     def execute(self):
         if readytogo:
             try:
-                Turn_on()
+                GEM.Turn_on()
                 GEM.SetPower(self.Laser_pw)
                 AWG.setOutput(1)
             except Exception as excpt:

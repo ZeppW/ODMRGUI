@@ -9,9 +9,10 @@ minVoltage = -10
 maxVoltage = 10
 DAQ_MaxSamplingRate = 2e6
 NsampsPerDAQread = 1000
-DAQ_StartTrig = "PFI0"
+DAQ_StartTrig = "PFI0" 
 
 def configureDAQ(Nsamples, isExternalclock = True):
+    global NsampsPerDAQread
     try:
     #Create and configure an analog input voltage task
         NsampsPerDAQread = Nsamples
@@ -38,9 +39,9 @@ def configureDAQ(Nsamples, isExternalclock = True):
         closeDAQTask(readTask)
         sys.exit()
     return readTask
-def readDAQ(task,N,timeout):
+def readDAQ(task,Nsamples = NsampsPerDAQread, timeout = 60):
     try:
-        counts = task.read(N,timeout)
+        counts = task.read(Nsamples,timeout)
     except Exception as excpt:
         print('Error: could not read DAQ. Please check your DAQ\'s connections. Exception details:', type(excpt).__name__,'.',excpt)
         sys.exit()
@@ -56,3 +57,6 @@ def plot_read(counts):
 
 def closeDAQTask(task):
     task.close()
+
+def sampleQ():
+    return NsampsPerDAQread

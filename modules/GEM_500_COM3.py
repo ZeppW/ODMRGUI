@@ -25,6 +25,9 @@ def Turn_off():
     GEM.write('OFF')
     print('Laser has been disabled!!!')
 
+def PowerQ():
+    return GEM.query('POWER?').split()[0]
+
 def tempQ():
     temp_list = []
     i = 0

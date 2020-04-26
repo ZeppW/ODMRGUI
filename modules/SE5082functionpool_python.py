@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import struct
 
-pyvisa.log_to_screen()
+#pyvisa.log_to_screen()
 rm = pyvisa.ResourceManager() # check what devices are connected
 rm.list_resources() # tell you names of connected devices
 SE5082 = rm.open_resource('GPIB0::10::INSTR') # connect to AWG
@@ -56,6 +56,9 @@ def setSamplingmode(inputs):
 ## inputs = NRZ | NRTZ | RTZ | RF
     SE5082.write('OUTP:SAMP:FORM ' + inputs)
 
+def samplingQ():
+    return SE5082.query('OUTP:SAMP:FORM?').split()[0]
+
 def getMode(inputs = 0):
     out = E5082.query('FUNC:MODE?')
     return out
@@ -69,31 +72,41 @@ def setAmplitude(inputs):
 
         SE5082.write('VOLT:AMPL ' + str(inputs))
 
+def amplitudeQ():
+    return float(SE5082.query('VOLT?'))
+    
+
                 
 
 def setTriggermode(inputs):
-
+    global trig_stat
 ##inputs = cont, gate or trig
     ## set input impedence to 50
     SE5082.write('TRIG:INP:IMP 10k')
     print(SE5082.query('TRIG:INP:IMP?'))
     if inputs == 'cont':
         SE5082.write('INIT:CONT 1')
+        trig_stat = 'cont'
     elif inputs == 'gate':
         SE5082.write('INIT:CONT 0')
         SE5082.write('INIT:GATE 1')
         SE5082.write('TRIG:SOUR:ADV EXT')
         SE5082.write('TRIG:SLOP POS')
         SE5082.write('TRIG:SEQ:LEV 1.200e+00')
+        trig_stat = 'gate'
     elif inputs == 'trig':
         SE5082.write('INIT:CONT 0')
         SE5082.write('INIT:TRIG 1')
         SE5082.write('TRIG:SOUR:ADV EXT')
         SE5082.write('TRIG:SLOP POS')
         SE5082.write('TRIG:SEQ:LEV 1.200e+00')
+        trig_stat = 'trig'
         
+def trigQ():
+    return trig_stat
+    
+    
 
-##def setSamplingmode(inputs):
     
 def setSinewave(inputs):
     SE5082.write('FUNC:MODE FIX')
